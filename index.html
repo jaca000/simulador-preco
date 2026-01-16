@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador de Preço</title>
+<style>
+body{font-family:-apple-system,Arial;background:#0f172a;color:#fff;padding:20px}
+.card{max-width:420px;margin:auto;background:#020617;padding:20px;border-radius:12px}
+label{display:block;margin-top:10px}
+input,button{width:100%;padding:10px;margin-top:5px}
+button{margin-top:15px;font-weight:bold}
+.result{margin-top:15px;font-size:1.2em;color:#22c55e}
+</style>
+</head>
+<body>
+<div class="card">
+<h2>🧮 Simulador de Preço</h2>
+
+<label>Custo matéria-prima (€)</label>
+<input id="mp" value="5">
+
+<label>Horas produção</label>
+<input id="h" value="0.5">
+
+<label>Custo/hora (€)</label>
+<input id="ch" value="15">
+
+<label>Markup (%)</label>
+<input id="m" value="50">
+
+<label>IVA (%)</label>
+<input id="iva" value="23">
+
+<button onclick="calc()">Calcular</button>
+
+<div class="result" id="r">—</div>
+</div>
+
+<script>
+function n(v){return Number(String(v).replace(",","."))||0}
+function calc(){
+  let c = n(mp.value)+(n(h.value)*n(ch.value))
+  let p = c*(1+n(m.value)/100)
+  let f = p*(1+n(iva.value)/100)
+  r.innerText = "Preço final: "+f.toFixed(2).replace(".",",")+" €"
+}
+</script>
+</body>
+</html>
