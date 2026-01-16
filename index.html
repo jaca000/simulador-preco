@@ -1,50 +1,102 @@
 <!DOCTYPE html>
 <html lang="pt-PT">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Simulador de Preço</title>
-<style>
-body{font-family:-apple-system,Arial;background:#0f172a;color:#fff;padding:20px}
-.card{max-width:420px;margin:auto;background:#020617;padding:20px;border-radius:12px}
-label{display:block;margin-top:10px}
-input,button{width:100%;padding:10px;margin-top:5px}
-button{margin-top:15px;font-weight:bold}
-.result{margin-top:15px;font-size:1.2em;color:#22c55e}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulador de Preço – Minutos</title>
+  <style>
+    :root { color-scheme: dark; }
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      background:#0f172a; color:#e5e7eb; margin:0; padding:20px;
+    }
+    .container{
+      max-width:520px; margin:0 auto; background:#020617; padding:20px;
+      border-radius:14px; border:1px solid #1e293b;
+      box-shadow:0 0 40px rgba(0,0,0,.35);
+    }
+    h1{ font-size:1.35rem; margin:0 0 14px; }
+    label{ display:block; font-size:.9rem; opacity:.9; margin-top:12px; }
+    input{
+      width:100%; padding:12px; margin-top:6px; border-radius:10px;
+      border:1px solid #1e293b; background:#0b1220; color:#e5e7eb; font-size:1rem;
+    }
+    button{
+      width:100%; margin-top:16px; padding:12px 14px; border-radius:12px;
+      border:1px solid #1e293b; background:#111c33; color:#e5e7eb;
+      font-size:1rem; font-weight:800; cursor:pointer;
+    }
+    button:active{ transform: translateY(1px); }
+    .result{
+      margin-top:16px; padding:14px; border-radius:12px;
+      background:#0b1220; border:1px solid #1e293b;
+    }
+    .price{ font-size:1.35rem; font-weight:900; color:#22c55e; margin-top:6px; }
+    .debug{ font-size:.95rem; opacity:.9; line-height:1.35; }
+    .small{ font-size:.8rem; opacity:.65; margin-top:10px; }
+  </style>
 </head>
 <body>
-<div class="card">
-<h2>🧮 Simulador de Preço</h2>
+  <div class="container">
+    <h1>🧮 Simulador de Preço</h1>
 
-<label>Custo matéria-prima (€)</label>
-<input id="mp" value="5">
+    <label for="mp">Custo matéria-prima (€)</label>
+    <input id="mp" type="text" value="2,5" />
 
-<label>Horas produção</label>
-<input id="h" value="0.5">
+    <label for="min">Tempo de produção (minutos)</label>
+    <input id="min" type="text" value="15" />
 
-<label>Custo/hora (€)</label>
-<input id="ch" value="15">
+    <label for="hora">Custo/hora (€)</label>
+    <input id="hora" type="text" value="15" />
 
-<label>Markup (%)</label>
-<input id="m" value="50">
+    <label for="markup">Markup (%)</label>
+    <input id="markup" type="text" value="50" />
 
-<label>IVA (%)</label>
-<input id="iva" value="23">
+    <label for="iva">IVA (%)</label>
+    <input id="iva" type="text" value="23" />
 
-<button onclick="calc()">Calcular</button>
+    <button onclick="calc()">Calcular</button>
 
-<div class="result" id="r">—</div>
-</div>
+    <div class="result">
+      <div class="debug" id="debug">—</div>
+      <div class="price" id="final">Preço final: —</div>
+      <div class="small">Nota: custo/hora é dividido por 60 para obter custo por minuto. Aceita vírgula (0,5) ou ponto (0.5).</div>
+    </div>
+  </div>
 
-<script>
-function n(v){return Number(String(v).replace(",","."))||0}
-function calc(){
-  let c = n(mp.value)+(n(h.value)*n(ch.value))
-  let p = c*(1+n(m.value)/100)
-  let f = p*(1+n(iva.value)/100)
-  r.innerText = "Preço final: "+f.toFixed(2).replace(".",",")+" €"
-}
-</script>
+  <script>
+    function n(v){
+      return Number(String(v ?? "").trim().replace(",", ".")) || 0;
+    }
+    function eur(x){
+      return x.toFixed(2).replace(".", ",") + " €";
+    }
+
+    function calc(){
+      const mp = n(document.getElementById("mp").value);
+      const minutos = n(document.getElementById("min").value);
+      const custoHora = n(document.getElementById("hora").value);
+      const markup = n(document.getElementById("markup").value) / 100;
+      const iva = n(document.getElementById("iva").value) / 100;
+
+      const custoMinuto = custoHora / 60;
+      const custoMO = minutos * custoMinuto;
+      const custoTotal = mp + custoMO;
+
+      const precoSemIva = custoTotal * (1 + markup);
+      const precoFinal = precoSemIva * (1 + iva);
+
+      document.getElementById("debug").innerHTML =
+        "Custo mão-de-obra: <b>" + eur(custoMO) + "</b><br>" +
+        "Custo total: <b>" + eur(custoTotal) + "</b><br>" +
+        "Preço s/IVA: <b>" + eur(precoSemIva) + "</b>";
+
+      document.getElementById("final").innerText =
+        "Preço final: " + eur(precoFinal);
+    }
+
+    // calcula logo ao abrir
+    calc();
+  </script>
 </body>
 </html>
