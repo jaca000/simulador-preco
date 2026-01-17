@@ -35,6 +35,17 @@
       font-size:1.05rem;
       font-weight:700;
       opacity:.95;
+      flex:1;
+    }
+
+    header button{
+      background:#0b1220;
+      border:1px solid #1e293b;
+      color:#e5e7eb;
+      padding:8px 12px;
+      border-radius:8px;
+      font-size:.85rem;
+      cursor:pointer;
     }
 
     /* ===== CONTAINER ===== */
@@ -66,7 +77,7 @@
       font-size:1rem;
     }
 
-    button{
+    button.calc{
       width:100%;
       margin-top:18px;
       padding:14px;
@@ -77,10 +88,6 @@
       font-size:1rem;
       font-weight:800;
       cursor:pointer;
-    }
-
-    button:active{
-      transform: translateY(1px);
     }
 
     .result{
@@ -114,17 +121,18 @@
 
 <body>
 
-  <!-- ===== HEADER PRINTASTIC ===== -->
+  <!-- ===== HEADER ===== -->
   <header>
     <img src="20.png" alt="Printastic_Al">
     <div class="title">Simulador de Preço</div>
+    <button onclick="fecharApp()">Sair</button>
   </header>
 
   <!-- ===== APP ===== -->
   <div class="container">
 
     <label for="mp">Custo matéria-prima (€)</label>
-    <input id="mp" type="text" value="2,5">
+    <input id="mp" type="text" value="" placeholder="ex.: 2,50">
 
     <label for="min">Tempo de produção (minutos)</label>
     <input id="min" type="text" value="15">
@@ -138,7 +146,7 @@
     <label for="iva">IVA (%)</label>
     <input id="iva" type="text" value="23">
 
-    <button onclick="calcular()">Calcular preço</button>
+    <button class="calc" onclick="calcular()">Calcular preço</button>
 
     <div class="result">
       <div class="debug" id="debug">—</div>
@@ -163,6 +171,12 @@
 
     function calcular(){
       const mp = n(document.getElementById("mp").value);
+      if(mp === 0){
+        document.getElementById("final").innerText = "Introduz o custo da matéria-prima";
+        document.getElementById("debug").innerHTML = "";
+        return;
+      }
+
       const minutos = n(document.getElementById("min").value);
       const custoHora = n(document.getElementById("hora").value);
       const margem = n(document.getElementById("margem").value) / 100;
@@ -184,8 +198,19 @@
         "Preço final: " + eur(precoFinal);
     }
 
-    // calcula logo ao abrir
-    calcular();
+    function fecharApp(){
+      // reset visual
+      document.getElementById("mp").value = "";
+      document.getElementById("min").value = "15";
+      document.getElementById("hora").value = "20";
+      document.getElementById("margem").value = "33";
+      document.getElementById("iva").value = "23";
+      document.getElementById("debug").innerHTML = "";
+      document.getElementById("final").innerText = "Preço final: —";
+
+      // fecha app (comportamento web seguro)
+      window.location.href = "about:blank";
+    }
   </script>
 
 </body>
